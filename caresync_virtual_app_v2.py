@@ -1,37 +1,34 @@
-
-<style>
-/* Brighter, cleaner background */
-[data-testid="stAppViewContainer"] {
-    background-color: #f9f9ff;
-}
-
-/* Logo styling */
-img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    padding-bottom: 10px;
-}
-
-/* Main content text formatting */
-h1, .stMarkdown {
-    color: #2c3e50;
-}
-
-/* Admin section formatting */
-section[aria-label="main"] {
-    background-color: #ffffffdd;
-    border-radius: 12px;
-    padding: 2rem;
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.05);
-}
-</style>
-
-
 import streamlit as st
 import pandas as pd
 from datetime import datetime
 import os
+
+# Custom styles to brighten the background and center the logo
+st.markdown("""
+    <style>
+    [data-testid="stAppViewContainer"] {
+        background-color: #f9f9ff;
+    }
+
+    img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        padding-bottom: 10px;
+    }
+
+    h1, .stMarkdown {
+        color: #2c3e50;
+    }
+
+    section[aria-label="main"] {
+        background-color: #ffffffdd;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0px 0px 10px rgba(0,0,0,0.05);
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 # --- Load logo ---
 if os.path.exists("logo.png"):
