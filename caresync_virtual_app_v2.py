@@ -15,7 +15,8 @@ df = df[df["Date"] >= pd.to_datetime("today")]
 df["Slot"] = df["Date"].dt.strftime("%Y-%m-%d") + " – " + df["Time"]
 
 # Combine date and time into a slot column
-df["Slot"] = df["Date"] + " – " + df["Time"]
+df = df.dropna(subset=["Date", "Time"])
+df["Slot"] = df["Date"].dt.strftime("%Y-%m-%d") + " – " + df["Time"].astype(str)
 
 # Custom styles to brighten the background and center the logo
 st.markdown("""
