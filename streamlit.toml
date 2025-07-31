@@ -1,0 +1,16 @@
+
+[theme]
+primaryColor = "#0E6BA8"
+backgroundColor = "#F5F7FA"
+secondaryBackgroundColor = "#E4ECF1"
+textColor = "#0A0A0A"
+font = "sans serif"
+
+[server]
+headless = true
+
+[client]
+showSidebarNavigation = false
+
+[general]
+email = "your-email@example.com"
