@@ -7,9 +7,6 @@ import os
 sheet_url = "https://docs.google.com/spreadsheets/d/1sp5JyQiAJzw1bfgvR12FxT4icYi92goh/gviz/tq?tqx=out:csv"
 df = pd.read_csv(sheet_url)
 
-# Combine date and time into a slot column (MUST happen before filtering!)
-df["Slot"] = df["Date"] + " – " + df["Time"]
-
 # ✅ Now remove already-booked slots
 appt_file = "appointments.csv"
 if os.path.exists(appt_file):
@@ -79,12 +76,6 @@ if "Duration" in df.columns:
 else:
     st.warning("⚠️ 'Duration' column missing in your data. Defaulting to all available slots.")
     time_filter = df["Time"].str.contains("1:00") if visit_type == "New Visit" else df["Time"].str.contains("30")
-    
-# --- Filter based on visit type ---
-if visit_type == "New Visit":
-    time_filter = df["Time"].str.contains("1:00") | df["Time"].str.contains("1hr|1 hr|1-hour", case=False)
-else:
-    time_filter = df["Time"].str.contains("30")
 
 filtered_df = df[(df["Provider"] == provider_choice) & time_filter]
 slot_choice = st.selectbox("Choose a Time Slot", filtered_df["Slot"].tolist())
