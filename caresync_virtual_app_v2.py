@@ -3,6 +3,20 @@ import pandas as pd
 from datetime import datetime
 import os
 
+# Read directly from the Google Sheet as CSV
+sheet_url = "https://docs.google.com/spreadsheets/d/1sp5JyQiAJzw1bfgvR12FxT4icYi92goh/gviz/tq?tqx=out:csv"
+df = pd.read_csv(sheet_url)
+
+# Ensure the Date column is in datetime format and filter for future dates only
+df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
+df = df[df["Date"] >= pd.to_datetime("today")]
+
+# Recreate the Slot column after filtering
+df["Slot"] = df["Date"].dt.strftime("%Y-%m-%d") + " – " + df["Time"]
+
+# Combine date and time into a slot column
+df["Slot"] = df["Date"] + " – " + df["Time"]
+
 # Custom styles to brighten the background and center the logo
 st.markdown("""
     <style>
@@ -42,21 +56,6 @@ You can use this tool to schedule a **telehealth visit** with a **palliative car
 Select your provider, visit type, choose a time slot, and confirm your appointment — it’s that easy.
 """)
 
-# --- Load slot data ---
-slots_file = "open_slots.csv"
-if not os.path.exists(slots_file):
-    sample_data = [
-        {"Provider": "Jane Smith", "Date": "2025-08-04", "Time": "10:00 - 10:30"},
-        {"Provider": "Sandhya Mudumbi", "Date": "2025-08-01", "Time": "2:00 - 3:00"},
-        {"Provider": "Avi B", "Date": "2025-08-07", "Time": "10:00 - 10:30"},
-        {"Provider": "Xaden R", "Date": "2025-08-06", "Time": "1:00 - 2:00"},
-    ]
-    pd.DataFrame(sample_data).to_csv(slots_file, index=False)
-
-sheet_url = "https://docs.google.com/spreadsheets/d/1sp5JyQiAJzw1bfgvR12FxT4icYi92goh/gviz/tq?tqx=out:csv"
-df = pd.read_csv(sheet_url)
-df["Slot"] = df["Date"] + " – " + df["Time"]
-
 # --- Form Inputs ---
 name = st.text_input("Patient Name")
 email = st.text_input("Patient Email")
@@ -65,7 +64,7 @@ provider_choice = st.selectbox("Choose a Provider", df["Provider"].unique())
 
 # --- Filter based on visit type ---
 if visit_type == "New Visit":
-    time_filter = df["Time"].str.contains("1:00") | df["Time"].str.contains("1 hour")
+    duration_filter = df["Time"].str.contains("1:00") | df["Time"].str.contains("1hr|1 hr|1-hour", case=False)
 else:
     time_filter = df["Time"].str.contains("30")
 
@@ -83,18 +82,18 @@ if st.button("Confirm Appointment"):
         "Timestamp": datetime.now().isoformat()
     }
 
-   # Save appointment to CSV
-appt_file = "appointments.csv"
-try:
-    if os.path.exists(appt_file) and os.path.getsize(appt_file) > 0:
-        appts = pd.read_csv(appt_file)
-        appts = pd.concat([appts, pd.DataFrame([appointment])], ignore_index=True)
-    else:
-        appts = pd.DataFrame([appointment])
-    appts.to_csv(appt_file, index=False)
-    st.success(f"✅ Appointment booked for {name} ({visit_type}) with {provider_choice} at {slot_choice}.")
-except Exception as e:
-    st.error(f"Error saving appointment: {e}")
+    # Save appointment to CSV
+    appt_file = "appointments.csv"
+    try:
+        if os.path.exists(appt_file) and os.path.getsize(appt_file) > 0:
+            appts = pd.read_csv(appt_file)
+            appts = pd.concat([appts, pd.DataFrame([appointment])], ignore_index=True)
+        else:
+            appts = pd.DataFrame([appointment])
+        appts.to_csv(appt_file, index=False)
+        st.success(f"✅ Appointment booked for {name} ({visit_type}) with {provider_choice} at {slot_choice}.")
+    except Exception as e:
+        st.error(f"Error saving appointment: {e}")
 
 # --- Admin download section ---
 st.markdown("---")
