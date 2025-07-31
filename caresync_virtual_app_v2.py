@@ -70,9 +70,19 @@ email = st.text_input("Patient Email")
 visit_type = st.radio("Visit Type", ["New Visit", "Follow-up Visit"])
 provider_choice = st.selectbox("Choose a Provider", df["Provider"].unique())
 
+# Determine visit duration filter
+if "Duration" in df.columns:
+    if visit_type == "New Visit":
+        time_filter = df["Duration"].str.contains("1:00") | df["Time"].str.contains("1 hour")
+    else:
+        time_filter = df["Duration"].str.contains("0:30") | df["Time"].str.contains("30")
+else:
+    st.warning("⚠️ 'Duration' column missing in your data. Defaulting to all available slots.")
+    time_filter = df["Time"].str.contains("1:00") if visit_type == "New Visit" else df["Time"].str.contains("30")
+    
 # --- Filter based on visit type ---
 if visit_type == "New Visit":
-    duration_filter = df["Time"].str.contains("1:00") | df["Time"].str.contains("1hr|1 hr|1-hour", case=False)
+    time_filter = df["Time"].str.contains("1:00") | df["Time"].str.contains("1hr|1 hr|1-hour", case=False)
 else:
     time_filter = df["Time"].str.contains("30")
 
