@@ -37,7 +37,7 @@ if os.path.exists("logo.png"):
 st.title("CareSync Virtual - Schedule a Telehealth Visit")
 
 st.markdown("""
-Welcome to **CareSync Virtual** 👩‍⚕️👨‍⚕️  
+Welcome to **CareSync Virtual**   
 You can use this tool to schedule a **telehealth visit** with a **palliative care physician or nurse practitioner**.  
 Select your provider, visit type, choose a time slot, and confirm your appointment — it’s that easy.
 """)
@@ -53,7 +53,8 @@ if not os.path.exists(slots_file):
     ]
     pd.DataFrame(sample_data).to_csv(slots_file, index=False)
 
-df = pd.read_csv(slots_file)
+sheet_url = "https://docs.google.com/spreadsheets/d/1sp5JyQiAJzw1bfgvR12FxT4icYi92goh/gviz/tq?tqx=out:csv"
+df = pd.read_csv(sheet_url)
 df["Slot"] = df["Date"] + " – " + df["Time"]
 
 # --- Form Inputs ---
