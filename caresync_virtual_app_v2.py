@@ -6,6 +6,9 @@ import smtplib
 from email.message import EmailMessage
 import os
 
+# Show logo
+st.image("logo.png", width=200)
+
 # Load slot data from CSV (you'll replace this with your real data source)
 slots_file = "open_slots.csv"
 if not os.path.exists(slots_file):
