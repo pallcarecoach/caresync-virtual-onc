@@ -7,12 +7,16 @@ import os
 sheet_url = "https://docs.google.com/spreadsheets/d/1sp5JyQiAJzw1bfgvR12FxT4icYi92goh/gviz/tq?tqx=out:csv"
 df = pd.read_csv(sheet_url)
 
-# Remove already-booked slots
+# Combine date and time into a slot column (MUST happen before filtering!)
+df["Slot"] = df["Date"] + " – " + df["Time"]
+
+# ✅ Now remove already-booked slots
 appt_file = "appointments.csv"
 if os.path.exists(appt_file):
     booked_df = pd.read_csv(appt_file)
-    booked_slots = booked_df["Slot"].unique()
-    df = df[~df["Slot"].isin(booked_slots)]
+    if "Slot" in booked_df.columns:
+        booked_slots = booked_df["Slot"].unique()
+        df = df[~df["Slot"].isin(booked_slots)]
 
 # Ensure the Date column is in datetime format and filter for future dates only
 df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
@@ -20,10 +24,6 @@ df = df[df["Date"] >= pd.to_datetime("today")]
 
 # Recreate the Slot column after filtering
 df["Slot"] = df["Date"].dt.strftime("%Y-%m-%d") + " – " + df["Time"]
-
-# Combine date and time into a slot column
-df = df.dropna(subset=["Date", "Time"])
-df["Slot"] = df["Date"].dt.strftime("%Y-%m-%d") + " – " + df["Time"].astype(str)
 
 # Custom styles to brighten the background and center the logo
 st.markdown("""
