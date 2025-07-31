@@ -20,7 +20,15 @@ if not os.path.exists(slots_file):
 df = pd.read_csv(slots_file)
 df["Slot"] = df["Date"] + " – " + df["Time"]
 
+st.image("logo.png", width=200)
+
 st.title("CareSync Virtual - Schedule a Telehealth Visit")
+
+st.markdown("""
+Welcome to **CareSync Virtual** 👩‍⚕️👨‍⚕️  
+You can use this tool to schedule a **telehealth visit** with a **palliative care physician or nurse practitioner**.  
+Select your provider, choose a time slot, and confirm your appointment — it’s that easy.
+""")
 
 name = st.text_input("Patient Name")
 email = st.text_input("Patient Email")
