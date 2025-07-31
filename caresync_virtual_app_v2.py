@@ -82,16 +82,18 @@ if st.button("Confirm Appointment"):
         "Timestamp": datetime.now().isoformat()
     }
 
-    # Save appointment to CSV
-    appt_file = "appointments.csv"
-    if os.path.exists(appt_file):
+   # Save appointment to CSV
+appt_file = "appointments.csv"
+try:
+    if os.path.exists(appt_file) and os.path.getsize(appt_file) > 0:
         appts = pd.read_csv(appt_file)
-        appts = appts.append(appointment, ignore_index=True)
+        appts = pd.concat([appts, pd.DataFrame([appointment])], ignore_index=True)
     else:
         appts = pd.DataFrame([appointment])
     appts.to_csv(appt_file, index=False)
-
     st.success(f"✅ Appointment booked for {name} ({visit_type}) with {provider_choice} at {slot_choice}.")
+except Exception as e:
+    st.error(f"Error saving appointment: {e}")
 
 # --- Admin download section ---
 st.markdown("---")
