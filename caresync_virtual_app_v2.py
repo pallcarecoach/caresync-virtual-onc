@@ -7,7 +7,10 @@ import os
 sheet_url = "https://docs.google.com/spreadsheets/d/1sp5JyQiAJzw1bfgvR12FxT4icYi92goh/gviz/tq?tqx=out:csv"
 df = pd.read_csv(sheet_url)
 
-# ✅ Now remove already-booked slots
+# Create Slot column BEFORE filtering anything
+df["Slot"] = df["Date"] + " – " + df["Time"]
+
+# Remove already-booked slots
 appt_file = "appointments.csv"
 if os.path.exists(appt_file):
     booked_df = pd.read_csv(appt_file)
