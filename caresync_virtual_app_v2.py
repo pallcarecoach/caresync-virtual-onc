@@ -7,6 +7,13 @@ import os
 sheet_url = "https://docs.google.com/spreadsheets/d/1sp5JyQiAJzw1bfgvR12FxT4icYi92goh/gviz/tq?tqx=out:csv"
 df = pd.read_csv(sheet_url)
 
+# Remove already-booked slots
+appt_file = "appointments.csv"
+if os.path.exists(appt_file):
+    booked_df = pd.read_csv(appt_file)
+    booked_slots = booked_df["Slot"].unique()
+    df = df[~df["Slot"].isin(booked_slots)]
+
 # Ensure the Date column is in datetime format and filter for future dates only
 df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
 df = df[df["Date"] >= pd.to_datetime("today")]
