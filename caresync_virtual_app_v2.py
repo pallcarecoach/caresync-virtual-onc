@@ -52,3 +52,19 @@ if st.button("Confirm Appointment"):
 
     # Placeholder for email confirmation
     st.success(f"✅ Appointment booked for {name} with {provider_choice} at {slot_choice}. Confirmation would be sent to {email}.")
+
+# 📥 Section: Admin download of booked appointments
+st.markdown("---")
+st.subheader("📥 Admin: Download Scheduled Appointments")
+
+appt_file = "appointments.csv"
+if os.path.exists(appt_file):
+    with open(appt_file, "rb") as f:
+        st.download_button(
+            label="Download appointments.csv",
+            data=f,
+            file_name="appointments.csv",
+            mime="text/csv"
+        )
+else:
+    st.info("No appointments have been booked yet.")
